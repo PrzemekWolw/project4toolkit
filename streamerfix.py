@@ -68,3 +68,6 @@ for file in os.listdir(folder_path):
                 
         # Export the .dae file, overwriting the original
         bpy.ops.wm.collada_export(filepath=file_path)
+        
+        # Remove the object from the scene
+        bpy.ops.object.delete()
