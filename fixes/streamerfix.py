@@ -51,29 +51,7 @@ def remove_all_duplicate_materials():
             og_material.name = og_material.name[:-4]
             
         i = i+1
-def remove_all_nonsense():
-
-    # Remove objects
-    for obj in bpy.data.objects:
-        if obj.name.startswith("cube"):
-            bpy.ops.object.select_all(action='DESELECT')
-            obj.select_set(True)
-            bpy.ops.object.delete()
-
-    # Remove lights
-    for obj in bpy.data.objects:
-        if obj.name.startswith("light"):
-            bpy.ops.object.select_all(action='DESELECT')
-            obj.select_set(True)
-            bpy.ops.object.delete())
-
-    # Remove cameras
-    for obj in bpy.data.objects:
-        if obj.name.startswith("camera"):
-            bpy.ops.object.select_all(action='DESELECT')
-            obj.select_set(True)
-            bpy.ops.object.delete()
-            
+    
 # Specify the path to the folder containing the .dae files
 folder_path = "C:/Users/user/Downloads/P4Toolkit/"
 
@@ -87,13 +65,27 @@ for file in os.listdir(folder_path):
         
         # Remove duplicate materials
         remove_all_duplicate_materials()
-        
-        # Remove nonsense
-        remove_all_nonsense()
                 
         # Export the .dae file, overwriting the original
         bpy.ops.wm.collada_export(filepath=file_path)
         
         # Remove the object from the scene
         bpy.ops.object.delete()
-        
+
+import os
+import shutil
+import zipfile
+
+# Find all .dds and .dae files in the current directory and its subdirectories
+dds_files = []
+for root, dirs, files in os.walk("."):
+    for file in files:
+        if file.endswith(".dds") or file.endswith(".dae"):
+            dds_files.append(os.path.join(root, file))
+
+# Create a new directory called "brook"
+os.makedirs("brook", exist_ok=True)
+
+# Move all .dds and .dae files into the new directory
+for file in dds_files:
+    shutil.move(file, "brook")
