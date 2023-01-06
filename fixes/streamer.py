@@ -18,6 +18,7 @@ for line in lines:
     rot_x = float(values[3].replace(",", ""))
     rot_y = float(values[4].replace(",", ""))
     rot_z = float(values[5].replace(",", ""))
+    rot_w = float(values[6].replace(",", ""))
 
     # Extract the name of the .dae file
     dae_name = (values[7].replace(",", ""))
@@ -85,9 +86,7 @@ for line in lines:
         
     # Set the position and rotation of the object
     obj.location = (pos_x, pos_y, pos_z)
-    obj.rotation_euler = (rot_x, rot_y, rot_z)
-    
-    
+    obj.rotation_quaternion = rot_quat
     
     # Set the export path for the modified .dae file
     export_path = os.path.join("C:/Users/user/Downloads/P4Toolkit/", dae_name + ".dae")

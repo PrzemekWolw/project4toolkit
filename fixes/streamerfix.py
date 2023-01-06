@@ -1,5 +1,6 @@
 #there is probably an error with running brook merge at the end in overwriting proper rotations with unfixed meshes
 #there is also likely an error with rotations from the .wpl using E for exponents in defining the float value, should probably be converted to use another representation or removed altogether past thousandths place.
+# there may also be an issue in excluding quaternion rotation from the streamer.py, look into adding w support
 
 import bpy
 import os
