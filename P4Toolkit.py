@@ -521,7 +521,10 @@ for obj_file in os.listdir(path):
 
         # Export the .obj file with the new material names
         bpy.ops.export_scene.obj(filepath=os.path.join(path, obj_file))
-                    
+        
+        # Remove the object from the scene
+        bpy.ops.object.delete()
+        
 CONVERT_DIR = "C:/Users/user/Downloads/P4Toolkit"
 
 import os
