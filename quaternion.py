@@ -2,6 +2,11 @@ import bpy
 import os
 import mathutils
 
+#this will convert the models position and rotation (w, x, y, z) quaternion by using the decrypted .wpl stream files. there is a known error here that in some fringe cases the w rotation is flipped positive when it should be negative, or vice versa. 
+
+#it is possible that RAGE is making a correction on its own here, possibly by using the last two values of the .wpl, but it is unknown. implement a fix for the known flipped w rotations.
+
+#most of these should be combined into one streamer for ease of use.
       
 # Open the stream.txt file and read the lines
 with open("stream.txt", "r") as stream:

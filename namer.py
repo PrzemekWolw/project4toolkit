@@ -1,7 +1,9 @@
 import os
 
+#does what it says, renames the files for proper use in the .json instance file
+
 # Set the directory you want to start from
-rootDir = 'C:/Users/user/Downloads/P4Toolkit/'
+rootDir = 'C:/Users/user/Documents/quaternion tests/new'
 i = 1
 
 for dirName, subdirList, fileList in os.walk(rootDir):

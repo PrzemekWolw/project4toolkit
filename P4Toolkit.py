@@ -2,12 +2,13 @@ import os
 import re
 import sys
 
+#finds the .odr files in a given folder
 for root, dirs, files in os.walk("."):
     for file in files:
         if file.endswith(".odr"):
             with open(os.path.join(root, file), "r") as f:
                   print('check')
-                  
+#defines the vertices, meshes, faces, and materials                  
 class Vertex:
     index = 0
     coordinates = [0, 0, 0]
@@ -298,7 +299,7 @@ class MeshParser:
         return {"obj": obj, "mtl": mtl}
 
 
-            
+#lod group and skeleton can likely be ignored here, they are not useful for mapping purposes            
 def parse_odr(lines):
     odr_data = {"shaders": [], "skeletons": [], "lodgroup": {}}
 
@@ -448,7 +449,7 @@ for root, dirs, files in os.walk("."):
             with open(input_file_path, "r") as f:
                 raw_odr_lines = f.read()
                 odr_data = parse_odr(raw_odr_lines)
-                # rest of the code to process the .odr file goes here
+                
 
             for lodgroup in odr_data["lodgroup"]:
                 output_obj_name = input_name + ".obj"
@@ -459,10 +460,10 @@ for root, dirs, files in os.walk("."):
 
                 model_data = mesh_parser.generate(True)
 
-                obj_headers = "# Converted by OpenFormatConverter\n\n"
+                obj_headers = "# Check"
                 obj_headers += f"mtllib {output_mtl_name}\n\n"
 
-                mtl_headers = "# Converted by OpenFormatConverter\n\n"
+                mtl_headers = "# Check"
 
                 model_data["obj"] = obj_headers + model_data["obj"]
                 model_data["mtl"] = mtl_headers + model_data["mtl"]
@@ -477,6 +478,7 @@ for root, dirs, files in os.walk("."):
 import bpy
 import os
 
+#since the materials will be exported from the .obj into the base color, they will be moved to the node for materials
 def find_base_color_node(mat):
     try:
         for node in mat.node_tree.nodes:
@@ -511,7 +513,7 @@ for obj_file in os.listdir(path):
             if mat.name.startswith("MAT")
         ]
 
-        # Rename the materials
+        # Rename the material, moving the base color to the material name
         for mat_name in mat_names:
             mat = bpy.data.materials[mat_name]
             node = find_base_color_node(mat)
@@ -524,7 +526,8 @@ for obj_file in os.listdir(path):
         
         # Remove the object from the scene
         bpy.ops.object.delete()
-        
+
+#starting here the .obj will be converted to a .dae, it is possible to merge the positional and quanternion rotational movements to this script and then optimize, which will make the process faster        
 CONVERT_DIR = "C:/Users/user/Downloads/P4Toolkit"
 
 import os
