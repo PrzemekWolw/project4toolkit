@@ -21,6 +21,6 @@ for odd_file in odd_files:
             drawable_name = block.split('\n')[0].strip()
             
             # Create a new .odd file for the drawable
-            with open(f'{drawable_name}.odr', 'w') as f:
+            with open(f'{drawable_name}.odd', 'w') as f:
                 # Write the block to the new file
                 f.write(f'gtaDrawable {block}')

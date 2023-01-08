@@ -2,14 +2,6 @@ import bpy
 import os
 import mathutils
 
-# Select all objects in the scene
-bpy.ops.object.select_all(action='SELECT')
-
-# Delete all selected objects
-bpy.ops.object.delete()
-
-# Set the active rendering engine to 'BLANK'
-
 #this will convert the models position and rotation (w, x, y, z) quaternion by using the decrypted .wpl stream files. there is a known error here that in some fringe cases the w rotation is flipped positive when it should be negative, or vice versa. 
 
 #it is possible that RAGE is making a correction on its own here, possibly by using the last two values of the .wpl, but it is unknown. implement a fix for the known flipped w rotations.
@@ -41,12 +33,12 @@ for line in lines:
     dae_name = (values[7].replace(",", ""))
 
     # Check if the .dae file exists
-    if not os.path.exists(os.path.join("C:/Users/user/Downloads/test", dae_name + ".dae")):
+    if not os.path.exists(os.path.join("C:/Users/user/Documents/quaternion tests/", dae_name + ".dae")):
         #print(".dae file not found:", dae_name)
         continue
 
     # Import the .dae file
-    bpy.ops.wm.collada_import(filepath=os.path.join("C:/Users/user/Downloads/test", dae_name + ".dae"))
+    bpy.ops.wm.collada_import(filepath=os.path.join("C:/Users/user/Documents/quaternion tests/", dae_name + ".dae"))
     
     
     # Iterate over all the objects in the scene
@@ -58,7 +50,7 @@ for line in lines:
         obj.location = (pos_x, pos_y, pos_z)
         
     # Set the export path for the modified .dae file
-    export_path = os.path.join("C:/Users/user/Downloads/test/new", dae_name + ".dae")
+    export_path = os.path.join("C:/Users/user/Documents/quaternion tests/new", dae_name + ".dae")
         
     # Export the object as a .dae file
     bpy.ops.wm.collada_export(filepath=export_path)

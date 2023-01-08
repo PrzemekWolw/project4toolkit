@@ -1,9 +1,7 @@
 import bpy
 import os
-# Select all objects in the scene
-bpy.ops.object.select_all(action='SELECT')
 
-# Delete all selected objects
+# Delete the default objects
 bpy.ops.object.delete()
 
 # Get a list of all .dae files in the current directory
@@ -12,9 +10,9 @@ dae_files = [f for f in os.listdir('.') if f.endswith('.dae')]
 # Iterate over the .dae files
 for dae_file in dae_files:
     # Check if the file has a prefix of "lod", "_lod", or "l_"
-    if dae_file.startswith(('lod', 'LOD', '_lod', 'l_')):
+    if dae_file.startswith(('lod', '_lod', 'l_')):
         # Get the file name without the prefix
-        base_name = dae_file[3:]
+        base_name = dae_file[4:]
         
         # Check if the file has a suffix of "_lod_0X"
         if base_name.endswith('_lod_0'):
@@ -36,26 +34,36 @@ for dae_file in dae_files:
             imported_objects = [obj for obj in bpy.data.objects if obj.type != 'EMPTY']
 
 
-            
+            # Create an empty called "base00"
+            bpy.ops.object.empty_add(type='PLAIN_AXES', location=(0, 0, 0))
+            base00 = bpy.context.active_object
+            base00.name = "base00"
 
-            # Iterate over the imported objects
+            # Create an empty called "start01" inside "base00"
+            bpy.ops.object.empty_add(type='PLAIN_AXES', location=(0, 0, 0))
+            start01 = bpy.context.active_object
+            start01.name = "start01"
+            start01.parent = base00
+
+                        # Iterate over the imported objects
             for obj in imported_objects:
-                # Check if the object's name contains any of the strings in the tuple ('lod', 'LOD', '_lod', 'l_')
-                if any(prefix in obj.name for prefix in ('lod', 'LOD', '_lod', 'l_')):
+                # Check if the object's name contains the string "lod"
+                if "lod" in obj.name:
                     # Add the suffix "_a130" to the object's name
                     obj.name += "_a130"
                 else:
-                    # Add the suffix "_a430" to the object's name
-                    obj.name += "_a430"
-
-
-
-
-
+                    # Check if the object's name is the same as the "lod" object's name without the "lod" string
+                    for lod_obj in imported_objects:
+                        if "lod" in lod_obj.name and obj.name == lod_obj.name.replace("lod", ""):
+                            # Add the suffix "_a430" to the object's name
+                            obj.name += "_a430"
             
+            # Parent the imported objects to "start01"
+            for obj in imported_objects:
+                obj.parent = start01
                 
             # Export the two files together
-            bpy.ops.wm.collada_export(filepath=dae_file[:-4] + "_fixed.dae")
+            bpy.ops.wm.collada_export(filepath=dae_file)
 
             # Remove the imported objects from the scene
             for obj in imported_objects:

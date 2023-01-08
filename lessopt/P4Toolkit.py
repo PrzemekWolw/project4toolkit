@@ -2,11 +2,9 @@ import os
 import re
 import sys
 
-
-
 for root, dirs, files in os.walk("."):
     for file in files:
-        if file.endswith(".odr"):
+        if file.endswith(".odd"):
             with open(os.path.join(root, file), "r") as f:
                   print('check')
                   
@@ -441,16 +439,16 @@ if __name__ == "__main__":
         print("Invalid arguments")
         exit(0)
 
-# Code to recursively process all .odr files in the current directory and subdirectories
+# Code to recursively process all .odd files in the current directory and subdirectories
 for root, dirs, files in os.walk("."):
     for file in files:
-        if file.endswith(".odr"):
+        if file.endswith(".odd"):
             input_file_path = os.path.join(root, file)
             input_name, ext = os.path.splitext(os.path.basename(input_file_path))
             with open(input_file_path, "r") as f:
                 raw_odr_lines = f.read()
                 odr_data = parse_odr(raw_odr_lines)
-                # rest of the code to process the .odr file goes here
+                # rest of the code to process the .odd file goes here
 
             for lodgroup in odr_data["lodgroup"]:
                 output_obj_name = input_name + ".obj"
@@ -478,15 +476,6 @@ for root, dirs, files in os.walk("."):
                     
 import bpy
 import os
-
-# Select all objects in the scene
-bpy.ops.object.select_all(action='SELECT')
-
-# Delete all selected objects
-bpy.ops.object.delete()
-
-# Set the active rendering engine to 'BLANK'
-
 
 def find_base_color_node(mat):
     try:
@@ -549,15 +538,6 @@ def file_iter(path, ext):
 
 import os
 import bpy
-
-# Select all objects in the scene
-bpy.ops.object.select_all(action='SELECT')
-
-# Delete all selected objects
-bpy.ops.object.delete()
-
-# Set the active rendering engine to 'BLANK'
-
 
 def reset_blend():
     bpy.ops.wm.read_factory_settings(use_empty=True)
