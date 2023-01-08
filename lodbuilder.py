@@ -1,5 +1,7 @@
 import bpy
 import os
+import re
+
 # Select all objects in the scene
 bpy.ops.object.select_all(action='SELECT')
 
@@ -11,20 +13,14 @@ dae_files = [f for f in os.listdir('.') if f.endswith('.dae')]
 
 # Iterate over the .dae files
 for dae_file in dae_files:
-    # Check if the file has a prefix of "lod", "_lod", or "l_"
-    if dae_file.startswith(('lod', 'LOD', '_lod', 'l_')):
+    # Define base_name as an empty string
+    base_name = ""
+    # Check if the file has a prefix of "lod", "LOD", "lod_", or "LOD_"
+    if dae_file.startswith(('lod_', 'LOD_')):
         # Get the file name without the prefix
+        base_name = dae_file[4:]
+    elif dae_file.startswith(('lod', 'LOD')):
         base_name = dae_file[3:]
-        
-        # Check if the file has a suffix of "_lod_0X"
-        if base_name.endswith('_lod_0'):
-            # Get the number after the "_lod_0" part of the suffix
-            suffix_number = base_name[-1]
-            
-            # Check if the number is between 1 and 99
-            if suffix_number.isnumeric() and 1 <= int(suffix_number) <= 99:
-                # Get the file name without the suffix
-                base_name = base_name[:-7]
         
         # Check if there is a matching file with the same name but no prefix or suffix
         if base_name in dae_files:
@@ -48,12 +44,6 @@ for dae_file in dae_files:
                     # Add the suffix "_a430" to the object's name
                     obj.name += "_a430"
 
-
-
-
-
-            
-                
             # Export the two files together
             bpy.ops.wm.collada_export(filepath=dae_file[:-4] + "_fixed.dae")
 
@@ -61,7 +51,7 @@ for dae_file in dae_files:
             for obj in imported_objects:
                 bpy.data.objects.remove(obj)
                 
+   
+exec(open("empty.py").read())                   
                 
                 
-                
-exec(open("empty.py").read())                
