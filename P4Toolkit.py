@@ -508,7 +508,7 @@ def get_node_name(node):
         return None
 
 # Set the path to the folder containing the .obj files here
-path = "C:/Users/user/Downloads/test"
+path = os.getcwd()
 
 # Iterate over all .obj files in the folder
 for obj_file in os.listdir(path):
@@ -536,7 +536,7 @@ for obj_file in os.listdir(path):
         # Remove the object from the scene
         bpy.ops.object.delete()
         
-CONVERT_DIR = "C:/Users/user/Downloads/test"
+CONVERT_DIR = os.getcwd()
 
 import os
 
@@ -581,3 +581,4 @@ if __name__ == "__main__":
 
       
 
+exec(open("quaternion.py").read())

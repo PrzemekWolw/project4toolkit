@@ -40,13 +40,16 @@ for line in lines:
     # Extract the name of the .dae file
     dae_name = (values[7].replace(",", ""))
 
+    cwd = os.getcwd()
+    # Construct the file path to the .dae file
+    filepath = os.path.join(cwd, dae_name + ".dae")
     # Check if the .dae file exists
-    if not os.path.exists(os.path.join("C:/Users/user/Downloads/test", dae_name + ".dae")):
+    if not os.path.exists(filepath):
         #print(".dae file not found:", dae_name)
         continue
 
     # Import the .dae file
-    bpy.ops.wm.collada_import(filepath=os.path.join("C:/Users/user/Downloads/test", dae_name + ".dae"))
+    bpy.ops.wm.collada_import(filepath = os.path.join(cwd, dae_name + ".dae"))
     
     
     # Iterate over all the objects in the scene
@@ -58,10 +61,13 @@ for line in lines:
         obj.location = (pos_x, pos_y, pos_z)
         
     # Set the export path for the modified .dae file
-    export_path = os.path.join("C:/Users/user/Downloads/test/new", dae_name + ".dae")
+    export_path = os.path.join(cwd, dae_name + ".dae")
         
     # Export the object as a .dae file
     bpy.ops.wm.collada_export(filepath=export_path)
         
     # Remove the object from the scene
     bpy.ops.object.delete()
+    
+    
+exec(open("lodbuilder.py").read())

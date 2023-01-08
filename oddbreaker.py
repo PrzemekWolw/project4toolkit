@@ -24,3 +24,5 @@ for odd_file in odd_files:
             with open(f'{drawable_name}.odr', 'w') as f:
                 # Write the block to the new file
                 f.write(f'gtaDrawable {block}')
+                
+exec(open("P4Toolkit.py").read())
