@@ -236,7 +236,7 @@ class MeshParser:
                     in_idx = -1
                 if "{" not in line and "}" not in line:
                     mesh.add_idx(line.split(" "))
-
+#is using in_xxx statements here any faster than prior if else statements?
             if in_verts > 0:
                 if depth < in_verts:
                     in_verts = -1
@@ -295,7 +295,7 @@ class MeshParser:
         print(f"Face count: {face_count}")
         print(f"Material count: {material_count}")
         print("--------------------")
-
+# no need for f" here, slower
         return {"obj": obj, "mtl": mtl}
 
 
@@ -402,7 +402,8 @@ def parse_odr(lines):
 
     lodgroup_lines = "\n".join(lodgroup_lines)
     regex_lod = r"(((h|H)igh)|((m|M)ed)|((l|L)ow)|((v|V)low)) [\d\.\w \\\-]+(\n\t+{\n\t+[\w\\\. \d]+\n\t+})*"
-
+# this is useless, there do not exist anythin lower than vhigh or high, parsing for med-low wastes time. 
+# high mesh is the only function here that is possible for .wdr parsing
     if match_lod := re.finditer(regex_lod, lodgroup_lines):
         for o in [x.group() for x in match_lod]:
             lod_type = o.split(" ")[0].lower()
@@ -474,7 +475,8 @@ for root, dirs, files in os.walk("."):
 import bpy
 import os
 
-# Select all objects in the scene
+#dont use bpy.ops here, too slow
+
 bpy.ops.object.select_all(action='SELECT')
 
 # Delete all selected objects
