@@ -14,7 +14,7 @@ bpy.ops.object.delete()
 
 #it is possible that RAGE is making a correction on its own here, possibly by using the last two values of the .wpl, but it is unknown. implement a fix for the known flipped w rotations.
 
-#the likely fix is that on LOD import, check if the W rotation matches on both files, if they do not match, find the one with the +W to a -W to match, RAGE is only making positive W errors
+#most of these should be combined into one streamer for ease of use.
       
 # Open the stream.txt file and read the lines
 with open("stream.txt", "r") as stream:
@@ -69,5 +69,5 @@ for line in lines:
     # Remove the object from the scene
     bpy.ops.object.delete()
     
-    print(dae_name)
-exec(open("streamerclean.py").read())
+    
+exec(open("lodbuilder.py").read())

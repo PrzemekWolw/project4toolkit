@@ -1,14 +1,7 @@
 import os
 import re
 import sys
-import bpy
-import mathutils
 
-# Select all objects in the scene
-bpy.ops.object.select_all(action='SELECT')
-
-# Delete all selected objects
-bpy.ops.object.delete()
 
 
 for root, dirs, files in os.walk("."):
@@ -30,15 +23,22 @@ class Vertex:
         self.uv = uv
     
     def get_v(self):
-        coordinates = [str(coord) for coord in self.coordinates]
+        coordinates = []
+        for coord in self.coordinates:
+            coordinates.append(str(coord))
+        
         return "v " + " ".join(coordinates)
     
     def get_vn(self):
-        normal = [str(norm) for norm in self.normal]
+        normal = []
+        for norm in self.normal:
+            normal.append(str(norm))
         return "vn " + " ".join(normal)
     
     def get_vt(self):
-        uv = [str(uv_coord) for uv_coord in self.uv]
+        uv = []
+        for uv_coord in self.uv:
+            uv.append(str(uv_coord))
         return "vt " + " ".join(uv)
     
     def get_index(self):
@@ -52,12 +52,7 @@ class Face:
     
 
     def get_f(self):
-        return "f " + " ".join(
-            [
-                f"{str(vert.get_index() + 1)}/{str(vert.get_index() + 1)}/{str(vert.get_index() + 1)}"
-                for vert in self.vertices
-            ]
-        )
+        return "f " + " ".join([str(vert.get_index() + 1) + "/" + str(vert.get_index() + 1) + "/" + str(vert.get_index() + 1) for vert in self.vertices])
 
 class Mesh:
     index = 0
@@ -149,9 +144,9 @@ class Material:
     def generate(self):
         if len(self.name) == 0:
             return ""
-
+        
         mtl = ""
-        mtl += f"newmtl {self.name}" + "\n"
+        mtl += "newmtl " + self.name + "\n"
         # mtl += "Ka " + " ".join([str(o) for o in self.Ka]) + "\n"
         # mtl += "Kd " + " ".join([str(o) for o in self.Kd]) + "\n"
         # mtl += "Ks " + " ".join([str(o) for o in self.Ks]) + "\n"
@@ -160,11 +155,11 @@ class Material:
         # mtl += "d " + str(self.d) + "\n"
         # mtl += "illum " + str(self.illum) + "\n"
         if len(self.map_Kd) > 0:
-            mtl += f"map_Kd {self.map_Kd}" + "\n"
+            mtl += "map_Kd " + self.map_Kd + "\n"
         if len(self.map_bump) > 0:
-            mtl += f"map_bump {self.map_bump}" + "\n"
+            mtl += "map_bump " + self.map_bump + "\n"
         if len(self.map_Ks) > 0:
-            mtl += f"map_Ks {self.map_Ks}" + "\n"
+            mtl += "map_Ks " + self.map_Ks + "\n"
         mtl += "\n"
         return mtl
 
@@ -176,10 +171,13 @@ class MaterialParser:
     def generate(self):
         materials = []
 
-        for index, shader in enumerate(self.shaders):
-            material = Material(f"MAT_{str(index)}")
+        index = 0
+        for shader in self.shaders:
+            material = Material("MAT_" + str(index))
             material.map_Kd = shader # TODO make something better
             materials.append(material)
+            index += 1
+
         return materials
 
 class MeshParser:
@@ -187,11 +185,11 @@ class MeshParser:
     meshes = []
     materials = []
 
-    def __init__(self, mesh_filepath, materials) -> None:
+    def __init__(self, mesh_file_path, materials) -> None:
         self.meshes = []
         self.materials = materials
 
-        with open(mesh_filepath) as f:
+        with open(mesh_file_path) as f:
             self.mesh_file_lines = f.read()
     
     def generate(self, debug):
@@ -219,33 +217,33 @@ class MeshParser:
                 mesh = Mesh(mesh_index)
                 try:
                     mesh.material = self.materials[mesh_index]
-                except Exception:
+                except:
                     pass
-
-
+                
+            
             if "idx" in line.lower() or "indices" in line.lower():
                 in_idx = depth + 1
                 continue
-
+            
             if "verts" in line.lower() or "vertices" in line.lower():
                 in_verts = depth + 1
                 continue
-
+            
             if in_idx > 0:
                 if depth < in_idx:
                     in_idx = -1
-                if "{" not in line and "}" not in line:
+                if not "{" in line and not "}" in line:
                     mesh.add_idx(line.split(" "))
-
+            
             if in_verts > 0:
                 if depth < in_verts:
                     in_verts = -1
-                if "{" not in line and "}" not in line:
+                if not "{" in line and not "}" in line:
                     mesh.add_vert(line)
-
+        
         if mesh is not None:
             self.meshes.append(mesh)
-
+        
         for i in range(len(self.meshes)):
             if i == 0:
                 self.meshes[i].set_vertex_offset(0)
@@ -265,21 +263,21 @@ class MeshParser:
         for mesh in self.meshes:
             for vert in mesh.vertices:
                 obj += vert.get_v() + "\n"
-
+        
         for mesh in self.meshes:
             for vert in mesh.vertices:
                 obj += vert.get_vn() + "\n"
-
+        
         for mesh in self.meshes:
             for vert in mesh.vertices:
                 obj += vert.get_vt() + "\n"
-
+        
         for mesh in self.meshes:
             if mesh.material is not None:
-                obj += f"usemtl {mesh.material.name}" + "\n"
+                obj += "usemtl " + mesh.material.name + "\n"
             for face in mesh.faces:
                 obj += face.get_f() + "\n"
-
+        
         vert_count = 0
         face_count = 0
         material_count = 0
@@ -287,8 +285,11 @@ class MeshParser:
             vert_count += len(mesh.vertices)
             face_count += len(mesh.faces)
             material_count += 1 if mesh.material is not None else 0
+        
+        mtl = ""
+        for material in self.materials:
+            mtl += material.generate()
 
-        mtl = "".join(material.generate() for material in self.materials)
         print("--------------------")
         print(f"Mesh count: {len(self.meshes)}")
         print(f"Vertex count: {vert_count}")
@@ -309,7 +310,8 @@ def parse_odr(lines):
     # Shader groups
     regex_shadinggroup = r"(s|S)hadinggroup(\n|\s|){\n\t{0,1}(s|S)haders \d{1,999}\n\t{0,1}{\n\t{2}[^}]+}\n}"
 
-    if match_shadinggroup := re.search(regex_shadinggroup, lines):
+    match_shadinggroup = re.search(regex_shadinggroup, lines)
+    if match_shadinggroup:
         tmp_shadinggroups = match_shadinggroup[0]
         tmp_shadinggroups = re.sub(r"(s|S)hadinggroup(\n|\s|){\n\t{0,1}(s|S)haders \d{1,999}\n\t{0,1}{\n", "", tmp_shadinggroups)
         tmp_shadinggroups = re.sub(r"\n\t{0,2}}\n}", "", tmp_shadinggroups)
@@ -320,10 +322,10 @@ def parse_odr(lines):
             for shadinggroup in tmp_shadinggroups.splitlines():
                 try:
                     shadinggroups.append(shadinggroup.split(" ")[1])
-                except Exception:
+                except:
                     pass
-
-    if not shadinggroups:
+    
+    if len(shadinggroups) == 0:
         sps_data = []
         depth = 0
         sps_name = ""
@@ -336,7 +338,7 @@ def parse_odr(lines):
                 depth += 1
             if "}" in line:
                 depth -= 1
-
+            
             if "shaders" in line.lower():
                 in_shaders = depth + 1
                 continue
@@ -345,17 +347,18 @@ def parse_odr(lines):
                 in_shaders = -1
 
             if in_shaders != -1:
-                if "{" in line and "{" not in previous_line:
-                    sps_name = re.sub(r"\t", "", previous_line)
+                if "{" in line:
+                    if not "{" in previous_line:
+                        sps_name = re.sub(r"\t", "", previous_line)
                 if "}" in line and len(sps_name) > 0:
                     sps_name = ""
+                
+                if len(sps_name) > 0:
+                    if not "{" in line:
+                        if "DiffuseSampler" in line:
+                            sps_data.append(re.sub(r"\\", "/", re.sub(line.split(" ")[0], "", line).lstrip()).replace(".otx", ".png")) # TODO make something better
+                        # sps_data[sps_name.replace(".", "")][re.sub(r"\t", "", line.split(" ")[0])] = re.sub(line.split(" ")[0], "", line)
 
-                if (
-                    len(sps_name) > 0
-                    and "{" not in line
-                    and "DiffuseSampler" in line
-                ):
-                    sps_data.append(re.sub(r"\\", "/", re.sub(line.split(" ")[0], "", line).lstrip()).replace(".otx", ".png")) # TODO make something better
             previous_line = line
         shadinggroups = sps_data
     # Shader groups
@@ -363,18 +366,18 @@ def parse_odr(lines):
     # Skeletons
     regex_skeletons = r"(s|S)kel(eton|)((\n|\s|){\n\t{0,1}[\w\.\s\t\\\-]+\n}|[ \w\\\.\d\-]+)"
 
-    if match_skeletons := re.search(regex_skeletons, lines):
+    match_skeletons = re.search(regex_skeletons, lines)
+    if match_skeletons:
         skeletons = match_skeletons[0]
         skeletons = re.sub(r"(s|S)kel(eton|)(\n|\s|) {*", "", skeletons)
         skeletons = re.sub(r"\n}", "", skeletons)
         skeletons = re.sub(r"\t", "", skeletons)
         skeletons = re.sub(r"\\", "/", skeletons)
-
-    new_skeletons = [
-        skel
-        for skel in skeletons.splitlines()
-        if skel.lower().endswith(".skel")
-    ]
+    
+    new_skeletons = []
+    for skel in skeletons.splitlines():
+        if skel.lower().endswith(".skel"):
+            new_skeletons.append(skel)
     skeletons = new_skeletons
     # Skeletons
 
@@ -389,21 +392,22 @@ def parse_odr(lines):
             depth += 1
         if "}" in line:
             depth -= 1
-
+        
         if "lodgroup" in line.lower():
             in_lodgroup = depth + 1
             continue
-
+        
         if in_lodgroup != -1:
             if depth < in_lodgroup:
                 in_lodgroup = -1
-
+            
             lodgroup_lines.append(line)
 
     lodgroup_lines = "\n".join(lodgroup_lines)
     regex_lod = r"(((h|H)igh)|((m|M)ed)|((l|L)ow)|((v|V)low)) [\d\.\w \\\-]+(\n\t+{\n\t+[\w\\\. \d]+\n\t+})*"
 
-    if match_lod := re.finditer(regex_lod, lodgroup_lines):
+    match_lod = re.finditer(regex_lod, lodgroup_lines)
+    if match_lod:
         for o in [x.group() for x in match_lod]:
             lod_type = o.split(" ")[0].lower()
             lod_value = ""
@@ -424,17 +428,18 @@ def parse_odr(lines):
 
     # LOD groups
 
-    if shadinggroups:
+    if len(shadinggroups) > 0:
         odr_data["shaders"] = shadinggroups
 
-    if skeletons:
+    if len(skeletons) > 0:
         odr_data["skeletons"] = skeletons
 
     return odr_data
 
-if __name__ == "__main__" and len(sys.argv) != 2:
-    print("Invalid arguments")
-    exit(0)
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Invalid arguments")
+        exit(0)
 
 # Code to recursively process all .odr files in the current directory and subdirectories
 for root, dirs, files in os.walk("."):
@@ -448,8 +453,8 @@ for root, dirs, files in os.walk("."):
                 # rest of the code to process the .odr file goes here
 
             for lodgroup in odr_data["lodgroup"]:
-                output_obj_name = f"{input_name}.obj"
-                output_mtl_name = f"{input_name}.mtl"
+                output_obj_name = input_name + ".obj"
+                output_mtl_name = input_name + ".mtl"
 
                 material_parser = MaterialParser(odr_data["shaders"])
                 mesh_parser = MeshParser(odr_data["lodgroup"][lodgroup], material_parser.generate())
@@ -466,11 +471,11 @@ for root, dirs, files in os.walk("."):
 
                 with open(output_obj_name, "w") as f:
                     f.write(model_data["obj"])
-
+                
                 with open(output_mtl_name, "w") as f:
                     f.write(model_data["mtl"])
-
-
+                    
+                    
 import bpy
 import os
 
@@ -496,7 +501,9 @@ def find_base_color_node(mat):
 
 def get_node_name(node):
     try:
-        return node.label or node.image.name
+        if node.label: return node.label
+        return node.image.name
+
     except Exception:
         return None
 
@@ -519,15 +526,16 @@ for obj_file in os.listdir(path):
         for mat_name in mat_names:
             mat = bpy.data.materials[mat_name]
             node = find_base_color_node(mat)
-            if new_name := get_node_name(node):
+            new_name = get_node_name(node)
+            if new_name:
                 mat.name = new_name
 
         # Export the .obj file with the new material names
         bpy.ops.export_scene.obj(filepath=os.path.join(path, obj_file))
-
+        
         # Remove the object from the scene
         bpy.ops.object.delete()
-
+        
 CONVERT_DIR = os.getcwd()
 
 import os
@@ -559,7 +567,7 @@ def convert_recursive(base_path):
         for file in files:
             if file.endswith('.obj'):
                 filepath_src = os.path.join(root, file)
-                filepath_dst = f"{os.path.splitext(filepath_src)[0]}.dae"
+                filepath_dst = os.path.splitext(filepath_src)[0] + ".dae"
 
                 print("Converting %r -> %r" % (filepath_src, filepath_dst))
 
