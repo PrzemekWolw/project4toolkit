@@ -10,6 +10,9 @@ It also supports the direct conversion of locally stored assets to 2 currently s
 
 It supports proper material mapping for modifications to be done in blender or .3DS MAX, and supports native positional and quaternion rotations normally applied to models during engine runtime. 
 
+## LOD Features
+The tool supports the creation of new LOD meshes or the exportation of LOD meshes contained within .wdb libraries with proper matching to the LOD0 model it corresponds to.
+
 ## Games Supported
 Grand Theft Auto IV (.wpl, .wdr, .wdb)
 
