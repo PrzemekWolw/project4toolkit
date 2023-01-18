@@ -15,3 +15,9 @@ Grand Theft Auto IV (.wpl, .wdr, .wdb)
 
 Grand Theft Auto V (.ymap, .ydr, .ydb)
 
+## Support Planned
+Blender GUI support for reading, writing, and repacking to native formats.
+
+Collision model exportation.
+
+Multiple .wpl instance duplication support for .wdrs.
