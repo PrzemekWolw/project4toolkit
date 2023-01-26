@@ -10,6 +10,8 @@ import re
 import sys
 import bpy
 import mathutils
+import os
+import bpy
 
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete()
@@ -449,12 +451,11 @@ for root, dirs, files in os.walk("."):
                     f.write(model_data["mtl"])
                 print(output_obj_name)
 
-import bpy
-import os
+CONVERT_DIR = os.getcwd()
 
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete()
-# This will not work for .wdb conversions as the materials are slightly different and are not stored in base color. During the original .obj export, write in the new function for the .wdb material support.
+
 def find_base_color_node(mat):
     try:
         for node in mat.node_tree.nodes:
@@ -472,41 +473,6 @@ def get_node_name(node):
     except Exception:
         return None
 
-path = os.getcwd()
-for obj_file in os.listdir(path):
-    if obj_file.endswith(".obj"):
-        bpy.ops.import_scene.obj(filepath=os.path.join(path, obj_file))
-        mat_names = [
-            mat.name for mat in bpy.data.materials
-            if mat.name.startswith("MAT")
-        ]
-
-        for mat_name in mat_names:
-            mat = bpy.data.materials[mat_name]
-            node = find_base_color_node(mat)
-            if new_name := get_node_name(node):
-                mat.name = new_name
-                
-        bpy.ops.export_scene.obj(filepath=os.path.join(path, obj_file))
-        bpy.ops.object.delete()
-
-CONVERT_DIR = os.getcwd()
-
-import os
-
-def file_iter(path, ext):
-    for dirpath, dirnames, filenames in os.walk(path):
-        for filename in filenames:
-            ext = os.path.splitext(filename)[1]
-            if ext.lower().endswith(ext):
-                yield os.path.join(dirpath, filename)
-
-import os
-import bpy
-
-bpy.ops.object.select_all(action='SELECT')
-bpy.ops.object.delete()
-
 def reset_blend():
     bpy.ops.wm.read_factory_settings(use_empty=True)
 
@@ -517,11 +483,21 @@ def convert_recursive(base_path):
                 filepath_src = os.path.join(root, file)
                 filepath_dst = f"{os.path.splitext(filepath_src)[0]}.dae"
 
-                print("Converting %r -> %r" % (filepath_src, filepath_dst))
+                print("Converting Meshes...")
 
                 reset_blend()
 
                 bpy.ops.import_scene.obj(filepath=filepath_src)
+                mat_names = [
+                    mat.name for mat in bpy.data.materials
+                    if mat.name.startswith("MAT")
+                ]
+
+                for mat_name in mat_names:
+                    mat = bpy.data.materials[mat_name]
+                    node = find_base_color_node(mat)
+                    if new_name := get_node_name(node):
+                        mat.name = new_name
                 bpy.ops.wm.collada_export(filepath=filepath_dst)
 
 if __name__ == "__main__":
@@ -545,7 +521,7 @@ bpy.ops.object.delete()
 #It is possible that RAGE is making a correction on its own here, possibly by using the last two values of the .wpl, but it is unknown. implement a fix for the known flipped w rotations.
 #The likely fix is that on LOD import, check if the W rotation matches on both files, if they do not match, find the one with the +W to a -W to match, RAGE is only making positive W errors. This will only work if the LODMATCH function is reimplemented, currently it is disabled.
 
-with open("stream.txt", "r") as stream:
+with open("stream.wpl", "r") as stream:
     lines = stream.readlines()
 
 for line in lines:
@@ -566,7 +542,6 @@ for line in lines:
     cwd = os.getcwd()
     filepath = os.path.join(cwd, f"{dae_name}.dae")
     if not os.path.exists(filepath):
-        print(".dae file not found:", dae_name)
         continue
 
     bpy.ops.wm.collada_import(filepath=os.path.join(cwd, f"{dae_name}.dae"))
@@ -582,6 +557,8 @@ for line in lines:
     bpy.ops.object.delete()
 
     print(dae_name)
+    print(pos_x, pos_y, pos_z)
+    print(quat)
 # Current implemented fix is to double the negative sign on W rotations that are being ignored, this ensures the script is pulling the proper rotation, but unsure of why this is even occuring selectively for .wpl. It does not occur when parsing .ymap for GTAV.       
 def script3_function():
     print("Creating LODs")
@@ -614,6 +591,10 @@ def process_dae(file_path):
             obj.modifiers["Decimate"].ratio = 0.5
         bpy.context.view_layer.objects.active = obj
         bpy.ops.object.modifier_apply(modifier="Decimate")
+
+    for obj in [obj1, obj2]:
+        for i, mat in enumerate(obj.material_slots):
+            mat.material.name = "gray" + str(i)
     
 # Need a function here that will reduce drawcalls by changing the entire UV mapped material set to just one .dds since we are neither implementing LODMATCH here nor using the .wdb textures. This one .dds method should only be used when employing the simple LOD creator shown here.     
     bpy.ops.object.empty_add(type='ARROWS', radius=1, location=(0, 0, 0))
@@ -677,8 +658,40 @@ for file in os.listdir(cwd):
                 s1 = re.sub(r"\.\d{3}", "", s1)
                 m_slot.material.name = s1
 
+        for mat in bpy.data.materials:
+            if mat.name[-4:].isdigit():
+                mat.name = mat.name[:-4]
+
         bpy.ops.wm.collada_export(filepath=file)
  
         bpy.ops.object.delete()
         
-# decimate the objects in the .dae files
+def script5_function():
+    print("Moving Files")
+
+script5_function()
+
+import os
+import shutil
+
+cwd = os.getcwd()
+delete_types = ['.obj', '.mtl', '.odr', '.mesh']
+
+for item in os.listdir(cwd):
+    item_path = os.path.join(cwd, item)
+    if os.path.isfile(item_path):
+        if any(item.endswith(x) for x in delete_types):
+            os.remove(item_path)
+    elif os.path.isdir(item_path):
+        if item != "brook":
+            shutil.rmtree(item_path)
+
+new_folder = os.path.join(cwd, "brook")
+if not os.path.exists(new_folder):
+    os.mkdir(new_folder)
+
+for item in os.listdir(cwd):
+    item_path = os.path.join(cwd, item)
+    if os.path.isfile(item_path):
+        if item.endswith('.dae') or item.endswith('.dds'):
+            shutil.move(item_path, new_folder)
