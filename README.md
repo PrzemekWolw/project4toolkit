@@ -2,7 +2,7 @@
 
 ## Features
 
-This toolkit is a reverse engineering tool for the exportation of file formats used in the RAGE Engine built Grand Theft Auto Games.
+This toolkit is a tool for the exportation of file formats used in the RAGE Engine built Grand Theft Auto Games.
 
 This includes formats for models, meshes, and world placement conversion to more commonplace file formats, including .obj and .dae.
 
