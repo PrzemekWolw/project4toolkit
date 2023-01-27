@@ -121,7 +121,7 @@ class Mesh:
             v1 = self.vertices[self.idx_data[i]]
             v2 = self.vertices[self.idx_data[i + 1]]
             v3 = self.vertices[self.idx_data[i + 2]]
-
+#for collisions the fourth vertex will indicate whether it is a triangle or a quad
             face = Face([v1, v2, v3])
             self.faces.append(face)
 
@@ -178,6 +178,7 @@ class MaterialParser:
             material = Material(f"MAT_{str(index)}")
             material.map_Kd = shader
             materials.append(material)
+            #this shouldnt be pushed to shader, as it will get moved into base color when it really should be BDSF principled
         return materials
 
 class MeshParser:
@@ -499,9 +500,10 @@ def convert_recursive(base_path):
                     if new_name := get_node_name(node):
                         mat.name = new_name
                 bpy.ops.wm.collada_export(filepath=filepath_dst)
+#this recursive is the slowest function in thr group, must be redefined, should be grouped with the other COLLADA based functions
 
 if __name__ == "__main__":
-    convert_recursive(CONVERT_DIR)
+    # SLOW convert_recursive(CONVERT_DIR)
 
       
 def script2_function():
