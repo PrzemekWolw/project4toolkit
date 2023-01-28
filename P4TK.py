@@ -1,4 +1,4 @@
-# Need to replace all listdir implementations with scandir to improve speed, multiple duplicate or split functions that can be combined will also serve to improve speed
+# Need to replace all scandir implementations with scandir to improve speed, multiple duplicate or split functions that can be combined will also serve to improve speed
 def script1_function():
     print("Checking WDRs")
 
@@ -17,7 +17,7 @@ bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete()
 
 
-for root, dirs, files in os.walk("."):
+for root, dirs, files in scandir.walk("."):
     for file in files:
         if file.endswith(".odr"):
             with open(os.path.join(root, file), "r") as f:
@@ -616,7 +616,7 @@ def process_dae(file_path):
 
 working_dir = os.getcwd()
 
-for file in os.listdir(working_dir):
+for file in os.scandir(working_dir):
     if file.endswith(".dae"):
         file_path = os.path.join(working_dir, file)
         process_dae(file_path)
@@ -637,7 +637,7 @@ bpy.ops.object.delete()
 
 
 cwd = os.getcwd()
-for file in os.listdir(cwd):
+for file in os.scandir(cwd):
     if file.endswith(".dae"):
         bpy.ops.wm.collada_import(filepath=file)
 
@@ -677,7 +677,7 @@ import shutil
 cwd = os.getcwd()
 delete_types = ['.obj', '.mtl', '.odr', '.mesh']
 
-for item in os.listdir(cwd):
+for item in os.scandir(cwd):
     item_path = os.path.join(cwd, item)
     if os.path.isfile(item_path):
         if any(item.endswith(x) for x in delete_types):
@@ -690,7 +690,7 @@ new_folder = os.path.join(cwd, "brook")
 if not os.path.exists(new_folder):
     os.mkdir(new_folder)
 
-for item in os.listdir(cwd):
+for item in os.scandir(cwd):
     item_path = os.path.join(cwd, item)
     if os.path.isfile(item_path):
         if item.endswith('.dae') or item.endswith('.dds'):
