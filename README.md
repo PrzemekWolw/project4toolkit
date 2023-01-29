@@ -13,6 +13,12 @@ It supports proper material mapping for modifications to be done in blender or .
 ## LOD Features
 The tool supports the creation of new LOD meshes or the exportation of LOD meshes contained within .wdb libraries with proper matching to the LOD0 model it corresponds to.
 
+## Requirements
+Python 3.11
+Blender 3.4
+pip
+pip install mathutils, os, sys, re, shutil
+
 ## Games Supported
 Grand Theft Auto IV (.wpl, .wdr, .wdb)
 
