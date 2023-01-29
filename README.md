@@ -15,8 +15,11 @@ The tool supports the creation of new LOD meshes or the exportation of LOD meshe
 
 ## Requirements
 Python 3.11
+
 Blender 3.4
+
 pip
+
 pip install mathutils, os, sys, re, shutil
 
 ## Games Supported
