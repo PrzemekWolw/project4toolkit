@@ -432,43 +432,45 @@ def parse_odr(lines):
 
     return odr_data
 
-if __name__ == "__main__" and len(sys.argv) != 2:
-    print("Invalid arguments")
-    exit(0)
+import os
+from concurrent.futures import ThreadPoolExecutor
 
+def process_file(file_path):
+    input_name, ext = os.path.splitext(os.path.basename(file_path))
+    with open(file_path, "r") as f:
+        raw_odr_lines = f.read()
+        odr_data = parse_odr(raw_odr_lines)
 
-for dir_entry in os.scandir("."):
-    if dir_entry.is_file() and dir_entry.name.endswith(".odr"):
-            input_file_path = dir_entry.path
-            input_name, ext = os.path.splitext(os.path.basename(input_file_path))
-            with open(input_file_path, "r") as f:
-                raw_odr_lines = f.read()
-                odr_data = parse_odr(raw_odr_lines)
+    for lodgroup in odr_data["lodgroup"]:
+        output_obj_name = f"{input_name}.obj"
+        output_mtl_name = f"{input_name}.mtl"
 
-            for lodgroup in odr_data["lodgroup"]:
-                output_obj_name = f"{input_name}.obj"
-                output_mtl_name = f"{input_name}.mtl"
+        material_parser = MaterialParser(odr_data["shaders"])
+        mesh_parser = MeshParser(odr_data["lodgroup"][lodgroup], material_parser.generate())
 
-                material_parser = MaterialParser(odr_data["shaders"])
-                mesh_parser = MeshParser(odr_data["lodgroup"][lodgroup], material_parser.generate())
+        model_data = mesh_parser.generate(True)
 
-                model_data = mesh_parser.generate(True)
+        obj_headers = "# bng\n\n"
+        obj_headers += f"mtllib {output_mtl_name}\n\n"
 
-                obj_headers = "# bng\n\n"
-                obj_headers += f"mtllib {output_mtl_name}\n\n"
+        mtl_headers = "# bng\n\n"
 
-                mtl_headers = "# bng\n\n"
+        model_data["obj"] = obj_headers + model_data["obj"]
+        model_data["mtl"] = mtl_headers + model_data["mtl"]
 
-                model_data["obj"] = obj_headers + model_data["obj"]
-                model_data["mtl"] = mtl_headers + model_data["mtl"]
+        with open(output_obj_name, "w") as f:
+            f.write(model_data["obj"])
 
-                with open(output_obj_name, "w") as f:
-                    f.write(model_data["obj"])
+        with open(output_mtl_name, "w") as f:
+            f.write(model_data["mtl"])
+    print(output_obj_name)
 
-                with open(output_mtl_name, "w") as f:
-                    f.write(model_data["mtl"])
-                print(output_obj_name)
-
+# Create a thread pool with 4 threads
+with ThreadPoolExecutor(max_workers=4) as executor:
+    file_paths = [dir_entry.path for dir_entry in os.scandir(".") if dir_entry.is_file() and dir_entry.name.endswith(".odr")]
+    # Submit the process_file function for each file in file_paths
+    results = [executor.submit(process_file, file_path) for file_path in file_paths]
+    
 CONVERT_DIR = os.getcwd()
 
 bpy.ops.object.select_all(action='SELECT')
@@ -492,87 +494,41 @@ def get_node_name(node):
         return None
 
 def convert_recursive(base_path):
+    files_to_convert = []
     for entry in os.scandir(base_path):
         if entry.is_file() and entry.name.endswith('.obj'):
-                filepath_src = entry.path
-                filepath_dst = f"{os.path.splitext(filepath_src)[0]}.dae"
+            files_to_convert.append(entry.path)
 
-                print("Converting Meshes...")
-                bpy.ops.import_scene.obj(filepath=filepath_src)
-                mat_names = [
-                    mat.name for mat in bpy.data.materials
-                    if mat.name.startswith("MAT")
-                ]
+    batch_size = 50
+    for i in range(0, len(files_to_convert), batch_size):
+        batch = files_to_convert[i:i+batch_size]
+        for filepath_src in batch:
+            filepath_dst = f"{os.path.splitext(filepath_src)[0]}.dae"
 
-                for mat_name in mat_names:
-                    mat = bpy.data.materials[mat_name]
-                    node = find_base_color_node(mat)
-                    if new_name := get_node_name(node):
-                        mat.name = new_name
-                # This is really slow, use numpy to convert to .dae
-                bpy.ops.wm.collada_export(filepath=filepath_dst)
-                bpy.ops.object.select_all(action='SELECT')
-                bpy.ops.object.delete()
+            print("Converting Meshes...")
+            bpy.ops.import_scene.obj(filepath=filepath_src)
+            for obj in bpy.context.selected_objects:
+                obj.rotation_euler = (0, 0, 0)
+            mat_names = [
+                mat.name for mat in bpy.data.materials
+                if mat.name.startswith("MAT")
+            ]
+
+            for mat_name in mat_names:
+                mat = bpy.data.materials[mat_name]
+                node = find_base_color_node(mat)
+                if new_name := get_node_name(node):
+                    mat.name = new_name
+            # This is really slow, use numpy to convert to .dae
+            bpy.ops.wm.collada_export(filepath=filepath_dst)
+            bpy.ops.object.select_all(action='SELECT')
+            bpy.ops.object.delete()
 
 if __name__ == "__main__":
     convert_recursive(CONVERT_DIR)
+    
 
             
-def script2_function():
-    print("Converting Quaternions")
-
-script2_function()
-
-import bpy
-import os
-import mathutils
-
-bpy.ops.object.select_all(action='SELECT')
-bpy.ops.object.delete()
-
-#This will convert the models position and rotation (w, x, y, z) quaternion by using the decrypted .wpl stream files. There is a known error here that in some fringe cases the w rotation is flipped positive when it should be negative, or vice versa. 
-#It is possible that RAGE is making a correction on its own here, possibly by using the last two values of the .wpl, but it is unknown. implement a fix for the known flipped w rotations.
-#The likely fix is that on LOD import, check if the W rotation matches on both files, if they do not match, find the one with the +W to a -W to match, RAGE is only making positive W errors. This will only work if the LODMATCH function is reimplemented, currently it is disabled.
-
-with open("stream.wpl", "r") as stream:
-    lines = stream.readlines()
-
-for line in lines:
-    values = line.split()
-
-    # Extract the position and rotation values from .wpl. RAGE uses Euler for position and quaternion for its rotations, it is also possible to convert to a rotation matrix that T3D would understand since it does not currently support .json quaternion to my knowledge. If the mechanism for doing so can be found, error correction for W need not be implemented.
-    pos_x = float(values[0].replace(",", ""))
-    pos_y = float(values[1].replace(",", ""))
-    pos_z = float(values[2].replace(",", ""))
-    rot_x = float(values[3].replace(",", ""))
-    rot_y = float(values[4].replace(",", ""))
-    rot_z = float(values[5].replace(",", ""))
-    rot_w_str = values[6].replace(",", "")
-    rot_w = -float(rot_w_str[1:]) if rot_w_str[0] == "-" else float(rot_w_str)
-    quat = mathutils.Quaternion((rot_w, rot_x, rot_y, rot_z))
-    dae_name = (values[7].replace(",", ""))
-
-    cwd = os.getcwd()
-    filepath = os.path.join(cwd, f"{dae_name}.dae")
-    if not os.path.exists(filepath):
-        continue
-
-    bpy.ops.wm.collada_import(filepath=os.path.join(cwd, f"{dae_name}.dae"))
-
-    for obj in bpy.context.scene.objects:
-        obj.rotation_mode = "QUATERNION"
-        obj.rotation_quaternion = quat
-        obj.location = (pos_x, pos_y, pos_z)
-
-    export_path = os.path.join(cwd, f"{dae_name}.dae")
-
-    bpy.ops.wm.collada_export(filepath=export_path)
-    bpy.ops.object.delete()
-
-    print(dae_name)
-    print(pos_x, pos_y, pos_z)
-    print(quat)
-# Current implemented fix is to double the negative sign on W rotations that are being ignored, this ensures the script is pulling the proper rotation, but unsure of why this is even occuring selectively for .wpl. It does not occur when parsing .ymap for GTAV.       
 def script3_function():
     print("Creating LODs")
     
@@ -674,36 +630,6 @@ for file in os.listdir(cwd):
  
         bpy.ops.object.delete()
         
-def script5_function():
-    print("Moving Files")
-
-script5_function()
-
-import os
-import shutil
-
-cwd = os.getcwd()
-delete_types = ['.obj', '.mtl', '.odr', '.mesh']
-
-for item in os.listdir(cwd):
-    item_path = os.path.join(cwd, item)
-    if os.path.isfile(item_path):
-        if any(item.endswith(x) for x in delete_types):
-            os.remove(item_path)
-    elif os.path.isdir(item_path):
-        if item != "brook":
-            shutil.rmtree(item_path)
-
-new_folder = os.path.join(cwd, "brook")
-if not os.path.exists(new_folder):
-    os.mkdir(new_folder)
-
-for item in os.listdir(cwd):
-    item_path = os.path.join(cwd, item)
-    if os.path.isfile(item_path) and (
-        item.endswith('.dae') or item.endswith('.dds')
-    ):
-        shutil.move(item_path, new_folder)
 
 
 end_time = time.time()
