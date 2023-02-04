@@ -580,6 +580,7 @@ script3_function()
 
 import os
 import bpy
+import random
 
 def process_dae(file_path):
     bpy.ops.wm.collada_import(filepath=file_path)
@@ -595,7 +596,7 @@ def process_dae(file_path):
     obj2 = bpy.context.selected_objects[0]
     obj2.name = f"{imported_obj.name}_a130"
     imported_obj.name = f"{imported_obj.name}_a430"
-
+                
     for obj in [obj1, obj2, imported_obj]:
         obj.modifiers.new("Decimate", type='DECIMATE')
         if "_a250" in obj.name:
@@ -606,8 +607,7 @@ def process_dae(file_path):
             obj.modifiers["Decimate"].ratio = 0.9
         bpy.context.view_layer.objects.active = obj
         bpy.ops.object.modifier_apply(modifier="Decimate")
-
-# Need a function here that will reduce drawcalls by changing the entire UV mapped material set to just one .dds since we are neither implementing LODMATCH here nor using the .wdb textures. This one .dds method should only be used when employing the simple LOD creator shown here.     
+     
     bpy.ops.object.empty_add(type='ARROWS', radius=1, location=(0, 0, 0))
     base00 = bpy.context.object
     base00.name = "base00"
@@ -637,6 +637,33 @@ def script4_function():
 
 script4_function()
 
+import bpy
+import os
+import random
+
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete()
+
+gray_names = ['gray', 'gray2', 'gray3', 'gray4', 'gray5', 'gray6']
+cwd = os.getcwd()
+for filename in os.listdir(cwd):
+    if filename.endswith(".dae"):
+        file_path = os.path.join(cwd, filename)
+        bpy.ops.wm.collada_import(filepath=file_path)
+        for obj in bpy.context.selected_objects:
+            if obj.type == 'MESH':
+                if obj.name.endswith("_a130") or obj.name.endswith("_a250"):
+                    obj.data.materials.clear()
+                    gray = bpy.data.materials.new(random.choice(gray_names))
+                    obj.data.materials.append(gray)
+        bpy.ops.wm.collada_export(filepath=file_path)
+        bpy.ops.object.select_all(action='SELECT')
+        bpy.ops.object.delete()
+
+def script5_function():
+    print("LOD Materials")
+
+script5_function()
 # This just works better than attempting material cleaning in Blender, and saves an import.
 import os
 import re
@@ -652,10 +679,10 @@ for file in os.listdir(cwd):
                 line = re.sub(r'\.\d+">', '">', line)
                 f.write(line)
         
-def script5_function():
+def script6_function():
     print("Moving Files")
 
-script5_function()
+script6_function()
 
 import os
 import shutil
