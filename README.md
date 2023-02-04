@@ -18,9 +18,9 @@ Python 3.11
 
 Blender 3.4
 
-pip
+OpenIV
 
-pip install mathutils, os, sys, re, shutil
+Grand Theft Auto IV (1.0.4.0 - Complete Edition Steam/RGL) [Must have a valid license and non-pirated version, it will check the hash and .exe, there is no way of circumventing this, buy the game.]
 
 ## Games Supported
 Grand Theft Auto IV (.wpl, .wdr, .wdb)
