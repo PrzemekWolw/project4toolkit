@@ -603,9 +603,9 @@ def process_dae(file_path):
         if obj.name == obj3:
             obj.modifiers["Decimate"].ratio = 0.9
         if "_a250" in obj.name:
-            obj.modifiers["Decimate"].ratio = 0.5
+            obj.modifiers["Decimate"].ratio = 0.3
         elif "_a130" in obj.name:
-            obj.modifiers["Decimate"].ratio = 0.25
+            obj.modifiers["Decimate"].ratio = 0.15
         bpy.context.view_layer.objects.active = obj
         bpy.ops.object.modifier_apply(modifier="Decimate")
    
