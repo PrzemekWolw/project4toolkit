@@ -510,7 +510,7 @@ def convert_recursive(base_path):
                     if new_name := get_node_name(node):
                         mat.name = new_name
                 # This is really slow, use numpy to convert to .dae
-                bpy.ops.wm.collada_export(filepath=filepath_dst)
+                bpy.ops.wm.collada_export(filepath=filepath_dst, use_materials=False, use_textures=False)
                 bpy.ops.object.select_all(action='SELECT')
                 bpy.ops.object.delete()
 
@@ -566,7 +566,7 @@ for line in lines:
 
     export_path = os.path.join(cwd, f"{dae_name}.dae")
 
-    bpy.ops.wm.collada_export(filepath=export_path)
+    bpy.ops.wm.collada_export(filepath=export_path, use_materials=False, use_textures=False)
     bpy.ops.object.delete()
 
     print(dae_name)
@@ -595,17 +595,20 @@ def process_dae(file_path):
     obj2 = bpy.context.selected_objects[0]
     obj2.name = f"{imported_obj.name}_a130"
     imported_obj.name = f"{imported_obj.name}_a430"
+    obj3 = imported_obj
 
-    for obj in [obj1, obj2]:
+# There is no good reason for decimating the original mesh of LOD0, but BeamNG mesh instancing is horrible, so anything to reduce filesizes is beneficial. For even faster loading, remove 3 steps of LOD for just 2, or decimate even further.
+    for obj in [obj1, obj2, obj3]:
         obj.modifiers.new("Decimate", type='DECIMATE')
+        if obj.name == obj3:
+            obj.modifiers["Decimate"].ratio = 0.9
         if "_a250" in obj.name:
             obj.modifiers["Decimate"].ratio = 0.5
         elif "_a130" in obj.name:
             obj.modifiers["Decimate"].ratio = 0.25
         bpy.context.view_layer.objects.active = obj
         bpy.ops.object.modifier_apply(modifier="Decimate")
-
-# Need a function here that will reduce drawcalls by changing the entire UV mapped material set to just one .dds since we are neither implementing LODMATCH here nor using the .wdb textures. This one .dds method should only be used when employing the simple LOD creator shown here.     
+   
     bpy.ops.object.empty_add(type='ARROWS', radius=1, location=(0, 0, 0))
     base00 = bpy.context.object
     base00.name = "base00"
@@ -618,7 +621,7 @@ def process_dae(file_path):
     obj1.parent = start01
     obj2.parent = start01
 
-    bpy.ops.wm.collada_export(filepath=file_path)
+    bpy.ops.wm.collada_export(filepath=file_path, use_materials=False, use_textures=False)
 
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete()
@@ -635,49 +638,26 @@ def script4_function():
 
 script4_function()
 
-# Material cleaning is done twice due to the indexing log that Blender begins to build after each function is run. Either combine the functions into better sets or keep this here. Even with this implemented some indexes will still slip through.
-import bpy
+# This just works better than attempting material cleaning in Blender, and saves an import.
 import os
 import re
-
-bpy.ops.object.select_all(action='SELECT')
-bpy.ops.object.delete()
-
 
 cwd = os.getcwd()
 for file in os.listdir(cwd):
     if file.endswith(".dae"):
-        bpy.ops.wm.collada_import(filepath=file)
+        with open(os.path.join(cwd, file), "r") as f:
+            lines = f.readlines()
+        with open(os.path.join(cwd, file), "w") as f:
+            for line in lines:
+                line = re.sub(r'_\d+-material', '-material', line)
+                line = re.sub(r'\.\d+">', '">', line)
+                f.write(line)
 
 
-        for ob in bpy.context.selected_editable_objects:    
-            for m_slot in ob.material_slots:
-                if not m_slot.material:
-                    continue
-                s1 = m_slot.material.name
-                sArr = s1.split(".")
-                m_slot.material.name = sArr[0]
-
-        for ob in bpy.context.selected_editable_objects:    
-            for m_slot in ob.material_slots:
-                if not m_slot.material:
-                    continue
-                s1 = m_slot.material.name
-                s1 = re.sub(r"\.\d{3}", "", s1)
-                m_slot.material.name = s1
-
-        for mat in bpy.data.materials:
-            if mat.name[-4:].isdigit():
-                mat.name = mat.name[:-4]
-
-        bpy.ops.wm.collada_export(filepath=file)
- 
-        bpy.ops.object.delete()
-        
-def script5_function():
+def script6_function():
     print("Moving Files")
 
-script5_function()
+script6_function()
 
 import os
 import shutil
@@ -691,10 +671,10 @@ for item in os.listdir(cwd):
         if any(item.endswith(x) for x in delete_types):
             os.remove(item_path)
     elif os.path.isdir(item_path):
-        if item != "brook":
+        if item != "map":
             shutil.rmtree(item_path)
 
-new_folder = os.path.join(cwd, "brook")
+new_folder = os.path.join(cwd, "map")
 if not os.path.exists(new_folder):
     os.mkdir(new_folder)
 
