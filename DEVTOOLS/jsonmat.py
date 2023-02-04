@@ -1,6 +1,5 @@
 import os
 import json
-import uuid
 
 def main():
     cwd = os.getcwd()
@@ -14,11 +13,11 @@ def main():
                 "class": "Material",
                 "Stages": [
                     {
-                        "colorMap": f"/levels/p4tk/ext_veg/{dds_name}.dds",
+                        "colorMap": f"/levels/p4tk/map/mh/{dds_name}.dds",
                         "diffuseColor": [
-                            0.119062997,
-                            0.249724001,
-                            0.151963994,
+                            0.999989986,
+                            1,
+                            0.999992013,
                             1
                         ],
                         "emissive": False,
