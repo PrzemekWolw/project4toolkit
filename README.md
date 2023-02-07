@@ -3,7 +3,7 @@
 
 
 ## IMPORTANT
-This mod only works on a VALID PURCHASED Steam copy of Grand Theft Auto IV, this is to ensure that this tool is not used for pirated copies of the game, please buy the game and support the developers. This tool will not work if attempt to use it with a pirated copy of the game. The props, .ipls, .wpls will all not be functional, thus rendering the scripts useless. This serves as piracy protection but also as a means of ensuring everyone is only reporting bugs involving the same version of Grand Theft Auto IV. 
+This mod only works on a VALID PURCHASED Steam copy of Grand Theft Auto IV, this is to ensure that this tool is not used for pirated copies of the game, please buy the game and support the developers. This tool will not work if an attempt to use it with a pirated copy of the game is made. The props, .ipls, .wpls will all not be functional, thus rendering the scripts useless. This serves as piracy protection but also as a means of ensuring everyone is only reporting bugs involving the same version of Grand Theft Auto IV. 
 
 The only part of this tool that is not open sourced is the LCHUNK.pt4k and the PT4K.exe, as they are the way the tool checks your legitimate copy of the game.
 
