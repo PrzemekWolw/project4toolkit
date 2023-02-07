@@ -19,6 +19,8 @@ It also supports native positional and quaternion rotations normally applied to 
 The tool supports the creation of new LOD meshes or the exportation of LOD meshes contained within .wdb libraries with proper matching to the LOD0 model it corresponds to.
 
 ## Requirements
+Tell Windows that the p4tk.exe is not a virus, it isnt, you can scan it if you want.
+
 Python 3.10
 
 pip install bpy
