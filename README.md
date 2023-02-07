@@ -25,7 +25,7 @@ pip install bpy
 
 OpenIV
 
-Grand Theft Auto IV (Complete Edition Steam/RGL) [Must have a valid license and non-pirated version, it will check the hash and .exe, there is no way of circumventing this, buy the game.]
+Grand Theft Auto IV (Complete Edition Steam/RGL) [Must have a valid license and non-pirated version, it will check the .exe, there is no way of circumventing this, buy the game.]
 
 ## Games Supported
 Grand Theft Auto IV (.wpl, .wdr, .wdb)
