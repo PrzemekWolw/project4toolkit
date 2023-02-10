@@ -14,11 +14,11 @@ def main():
                 "class": "Material",
                 "Stages": [
                     {
-                        "colorMap": f"/levels/p4tk/ext_veg/{dds_name}.dds",
+                        "colorMap": f"/levels/smallgrid/map/mh/{dds_name}.dds",
                         "diffuseColor": [
-                            0.119062997,
-                            0.249724001,
-                            0.151963994,
+                            1,
+                            1,
+                            1,
                             1
                         ],
                         "emissive": False,
