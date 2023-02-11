@@ -9,7 +9,7 @@ def parse_occlu_ipl(file_path):
             position = [float(line_split[0]), float(line_split[1]), float(line_split[2])]
             scale = [float(line_split[3]), float(line_split[4]), float(line_split[5])]
             #the reason the Z position is calculated like this is because RAGE calculates Z position based upon the bottom of a bounding volume, whereas T3D calculates the Z for the volume from the center. By dividing the scale by 2 and adding it to the position, the RAGE occlusion volumes can be ported.
-            position[2] += scale[2] / 2
+            (position[2] + scale[2]) / 2
             occlusion_volume = {
                 "name": f"OcclusionVolume1_{i+1}",
                 "class": "OcclusionVolume",
