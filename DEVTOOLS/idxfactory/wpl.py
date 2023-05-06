@@ -1,6 +1,6 @@
 import os
 
-with open('manhat09.big', 'r') as big_file:
+with open('manhat12.big', 'r') as big_file:
     big_lines = big_file.readlines()
 
 # Create a list of all ".opl" files in the current working directory
