@@ -1,8 +1,8 @@
-with open('manhat09.big', 'r') as big_file:
+with open('manhat01.big', 'r') as big_file:
     big_lines = big_file.readlines()
 # Kind of hacky here subtracting 1 from the actual index value but I am not sure why it was ignoring trying to un-zero the prior file, who knows, or cares, it works.
 with open('output.txt', 'w') as output_file:
-    with open('manhat09_stream7.opl', 'r') as little_file:
+    with open('manhat01_stream7.opl', 'r') as little_file:
         for i, line in enumerate(little_file):
             # Obtain model name and reference number from the little file line
             little_model_name = line.split(",")[7].strip()
