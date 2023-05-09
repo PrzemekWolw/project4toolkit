@@ -53,7 +53,7 @@ The files being converted and the code converting them are not native RAGE forma
 
 Any takedown requests, questions, or contacts can be directed to: utopiadeferred0001@gmail.com. Do not use this email unless from a represented party.
 
-Fair Use Notice
+## Fair Use Notice
 
 Under the Fair Use doctrine of copyright law, this material may be used for the purpose of criticism, comment, news reporting, teaching, scholarship, or research, without the need for explicit permission from the copyright owner.
 
