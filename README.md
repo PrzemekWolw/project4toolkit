@@ -42,3 +42,13 @@ Collision model exportation.
 Multiple .wpl instance duplication support for .wdrs.
 
 Renderware game support (III, SA, VC).
+
+## Note for copyright:
+
+This project contains no assets, source code, files, or any other material owned by any company. 
+
+The tool cannot work on anything other than a valid licensed copy of Grand Theft Auto IV: The Complete Edition, and actively blocks usage on a pirated or older version of the game.
+
+The files being converted and the code converting them are not native RAGE formats, they are instead exporters of OpenFormats, which have been permitted to remain online by T2 and R*.
+
+Any takedown requests, questions, or contacts can be directed to: utopiadeferred0001@gmail.com. Do not use this email unless from a represented party.
