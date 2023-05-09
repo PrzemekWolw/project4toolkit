@@ -52,3 +52,15 @@ The tool cannot work on anything other than a valid licensed copy of Grand Theft
 The files being converted and the code converting them are not native RAGE formats, they are instead exporters of OpenFormats, which have been permitted to remain online by T2 and R*.
 
 Any takedown requests, questions, or contacts can be directed to: utopiadeferred0001@gmail.com. Do not use this email unless from a represented party.
+
+Fair Use Notice
+
+Under the Fair Use doctrine of copyright law, this material may be used for the purpose of criticism, comment, news reporting, teaching, scholarship, or research, without the need for explicit permission from the copyright owner.
+
+The use of copyrighted material in this repository or otherwise provided on this page is not intended to infringe upon the rights of the copyright owner. If you are the copyright owner of material used in this repository and you believe that your copyright rights have been violated, please contact us immediately and we will remove the material in question.
+
+This notice is provided in accordance with the requirements of the Digital Millennium Copyright Act (DMCA) and other applicable laws and regulations. It is the responsibility of users of this repository to comply with all applicable copyright laws and regulations.
+
+We acknowledge and respect the intellectual property rights of others, and we strive to comply with all applicable copyright laws and regulations. We believe that the use of copyrighted material in this repository falls within the boundaries of Fair Use, as set forth by U.S. copyright law.
+
+If you have any questions or concerns about the use of copyrighted material in this repository, please contact us. We are committed to working with copyright owners to address any concerns and to ensure that the use of copyrighted material in this repository is in compliance with applicable laws and regulations.
