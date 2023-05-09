@@ -63,4 +63,4 @@ This notice is provided in accordance with the requirements of the Digital Mille
 
 We acknowledge and respect the intellectual property rights of others, and we strive to comply with all applicable copyright laws and regulations. We believe that the use of any material in this repository falls within the boundaries of Fair Use, as set forth by U.S. copyright law.
 
-If you have any questions or concerns about the use of copyrighted material in this repository, please contact us. We are committed to working with copyright owners to address any concerns and to ensure that the use of any material in this repository is in compliance with applicable laws and regulations.
+If you have any questions or concerns about the use of any material in this repository, please contact us. We are committed to working with copyright owners to address any concerns and to ensure that the use of any material in this repository is in compliance with applicable laws and regulations.
