@@ -3,24 +3,11 @@
 
 
 ## IMPORTANT
-This mod only works on a VALID PURCHASED Steam copy of Grand Theft Auto IV, this is to ensure that this tool is not used for pirated copies of the game, please buy the game and support the developers. This tool will not work if an attempt to use it with a pirated copy of the game is made. The props, .ipls, .wpls will all not be functional, thus rendering the scripts useless. This serves as piracy protection but also as a means of ensuring everyone is only reporting bugs involving the same version of Grand Theft Auto IV. 
+This OpenFormats Tool only works on a VALID PURCHASED Steam copy of Grand Theft Auto IV, this is to ensure that this tool is not used for pirated copies of the game, please buy the game and support the developers. This tool will not work if an attempt to use it with a pirated copy of the game is made. This serves as piracy protection but also as a means of ensuring everyone is only reporting bugs involving the same version of Grand Theft Auto IV. 
 
 The only part of this tool that is not open sourced is the LCHUNK.pt4k and the PT4K.exe, as they are the way the tool checks your legitimate copy of the game.
 
-## Features
-
-This toolkit ports file formats (OpenIV) of the RAGE Engine built Grand Theft Auto Games to BeamNG.drive.
-
-This includes formats for models, materials, world placement, item placement, occlusion, LOD, paths, and more.
-
-It also supports native positional and quaternion rotations normally applied to models during engine runtime. 
-
-## LOD Features
-The tool supports the creation of new LOD meshes or the exportation of LOD meshes contained within .wdb libraries with proper matching to the LOD0 model it corresponds to.
-
 ## Requirements
-Tell Windows that the p4tk.exe is not a virus, it isnt, you can scan it if you want.
-
 Python 3.10
 
 pip install bpy
@@ -30,18 +17,7 @@ OpenIV
 Grand Theft Auto IV (Complete Edition Steam/RGL) [Must have a valid license and non-pirated version, it will check the .exe, there is no way of circumventing this, buy the game.]
 
 ## Games Supported
-Grand Theft Auto IV (.wpl, .wdr, .wdb)
-
-Grand Theft Auto V (.ymap, .ydr, .ydb)
-
-## Support Planned
-Blender GUI support for reading, writing, and repacking to native formats.
-
-Collision model exportation.
-
-Multiple .wpl instance duplication support for .wdrs.
-
-Renderware game support (III, SA, VC).
+Grand Theft Auto IV
 
 ## Note for copyright:
 
@@ -49,7 +25,7 @@ This project contains no assets, source code, files, or any other material owned
 
 The tool cannot work on anything other than a valid licensed copy of Grand Theft Auto IV: The Complete Edition, and actively blocks usage on a pirated or older version of the game.
 
-The files being converted and the code converting them are not native RAGE formats, they are instead exporters of OpenFormats, which have been permitted to remain online by T2 and R*.
+# The the code contained herein used for converting files are not native RAGE formats, they are instead exporters of OpenFormats, which have been permitted to remain online by T2 and R* as they are not a proprietary format.
 
 Any takedown requests, questions, or contacts can be directed to: utopiadeferred0001@gmail.com. Do not use this email unless from a represented party.
 
